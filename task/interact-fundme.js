@@ -16,7 +16,7 @@ task("interact-fundMe","interact with fundme contract ").addParam("addr", "fundm
     const balanceOfContract = await ethers.provider.getBalance(fundMe.target)
     console.log(`balance of the conteact is ${balanceOfContract}`)
 
-
+    
     //从第二个账号fund 到合约
     const fundTXWithSecondAccount = await fundMe.connect(secondAccount).fund({ value: ethers.parseEther("0.05") })
     await fundTXWithSecondAccount.wait()
@@ -35,3 +35,4 @@ task("interact-fundMe","interact with fundme contract ").addParam("addr", "fundm
 })
 
 module.exports = {}
+
