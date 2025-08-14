@@ -38,10 +38,11 @@ contract  FundMe {
      bool  public getFundSucess = false;
 
 
-    constructor(uint256 _lockTime){
+    constructor(uint256 _lockTime,address dataFeedAddr){
         owner = msg.sender;
         //seplolin 测试网
-        dataFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+       // dataFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        dataFeed = AggregatorV3Interface(dataFeedAddr);
         //当前区块时间
         deploymentTimestamp = block.timestamp;
         lockTime = _lockTime;
