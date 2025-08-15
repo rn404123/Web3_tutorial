@@ -37,6 +37,10 @@ contract  FundMe {
     //如果是public 类型的solidity 自动会创建get 函数和set 函数
      bool  public getFundSucess = false;
 
+     event FundWithdrawByOwner(uint256);
+
+      event RefundByFunder(address,uint256);
+
 
     constructor(uint256 _lockTime,address dataFeedAddr){
         owner = msg.sender;
@@ -94,12 +98,16 @@ contract  FundMe {
         //require(success,"tx failed");
         //第三种写法 call 推荐
         bool success; 
-        (success,) = payable(msg.sender).call{value : address(this).balance}("");
+        uint256 balance =  address(this).balance;
+        (success,) = payable(msg.sender).call{value : balance}("");
 
         require(success,"txansfer tx failed");
         funderToAmount[msg.sender] = 0;
 
         getFundSucess = true;  //falg 标识
+
+        //emit event 
+        emit FundWithdrawByOwner(balance);
     }
 
 
@@ -111,11 +119,13 @@ contract  FundMe {
 
 
         bool success;
-        (success,) = payable(msg.sender).call{value : funderToAmount[msg.sender]}("");
+        uint256 balance = funderToAmount[msg.sender];
+        (success,) = payable(msg.sender).call{value : balance}("");
 
          require(success,"txansfer tx failed");
          //执行成功后把值归0
          funderToAmount[msg.sender] = 0;
+         emit RefundByFunder(msg.sender,balance);
     }
 
     function setFunderToAmount(address funder,uint256 amountTOUpdate) external  {

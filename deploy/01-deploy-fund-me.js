@@ -20,12 +20,16 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
      const { deploy } = deployments  //  const deploy = deployments.deploy
 
      let dataFeedAddr
+     let confirmations
      if (developmentChains.includes(network.name)) {
           //本地环境
           const mockV3Aggregator = await  deployments.get("MockV3Aggregator")
           dataFeedAddr = mockV3Aggregator.address
+          confirmations = 0
+          
      } else {
           dataFeedAddr = networkConfig[network.config.chainId].ethUsdDataFeed
+          confirmations = CONFIRMATIONS
      }
 
 
@@ -33,7 +37,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
           from: firstAccount,
           args: [LOCK_TIME, dataFeedAddr],
           log: true,
-          //waitConfirmations: CONFIRMATIONS   //说明在mock 等待区块不需要加，浪费时间，再测试网络 1 - 2 个，如果在主网则一般等待网络区块3-6个即可
+          waitConfirmations: confirmations   //说明在mock 等待区块不需要加，浪费时间，再测试网络 1 - 2 个，如果在主网则一般等待网络区块3-6个即可
      })
      //删除deployments 文件夹或者命令后reset   如:npx hardhat deploy --network sepolia --reset  
      if (hre.network.config.chainId == 11155111 && process.env.ETHERSCAN_API_KEY) {
